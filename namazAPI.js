@@ -5,7 +5,12 @@ const mongoose = require('mongoose');
 const app = express();
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((err) => {
+      console.error('Failed to connect to MongoDB:', err);
+      process.exit(1); // Exit the application if the connection fails
+    });
 
 const prayerTimesSchema = new mongoose.Schema({
   cityId: Number,
