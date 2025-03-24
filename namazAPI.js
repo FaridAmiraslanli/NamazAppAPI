@@ -39,7 +39,15 @@ const prayerTimesSchema = new mongoose.Schema({
   ],
 });
 
+const citiesSchema = new mongoose.Schema({
+  id: Number,
+  code: String,
+  name: String,
+  country: String,
+});
+
 const PrayerTimes = mongoose.model('PrayerTimes', prayerTimesSchema, 'prayerTimes');
+const City = mongoose.model('City', citiesSchema, 'cities');
 
 app.get('/prayer-times', async (req, res) => {
     const { date, cityId } = req.query;
@@ -61,6 +69,24 @@ app.get('/prayer-times', async (req, res) => {
       }
   
       res.json(prayerData.prayerTimes[0]);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  app.get("/cities", async (req, res) => {
+
+    const { countryName } = req.query;
+
+    console.log('countryName', countryName);
+    try {
+      const citiesByCountry = await City.find(
+          { country: countryName }
+      );
+
+      res.json(citiesByCountry);
+      
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal server error' });
